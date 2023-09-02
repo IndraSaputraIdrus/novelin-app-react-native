@@ -7,13 +7,13 @@ import {
   TextInput,
 } from "react-native";
 import { Link, useLocalSearchParams } from "expo-router";
-import useFetch from "../../hooks/useFetch";
 import Error from "../../components/Error";
 import Loading from "../../components/Loading";
 import { FlatList } from "react-native-gesture-handler";
 import { useState } from "react";
 import Header from "../../components/Header";
 import { colors } from "../../constants";
+import useFetch from "../../hooks/useFetch";
 
 const NovelSlug = () => {
   const params = useLocalSearchParams();
