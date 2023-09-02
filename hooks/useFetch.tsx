@@ -17,9 +17,11 @@ const useFetch = ({ endpoint, method, body }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const url = process.env.EXPO_PUBLIC_API_URL;
+
   const options: AxiosRequestConfig = {
     method: method,
-    url: process.env.EXPO_PUBLIC_BASE_URL + endpoint,
+    url: url + endpoint,
     data: body,
   };
 
