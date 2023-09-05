@@ -1,25 +1,19 @@
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  View,
-  useWindowDimensions,
-} from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import useFetch from "../../../hooks/useFetch";
-import RenderHTML from "react-native-render-html";
 import Loading from "../../../components/Loading";
 import Error from "../../../components/Error";
 import Button from "../../../components/Button";
 import { useEffect, useState } from "react";
 import Header from "../../../components/Header";
 import { colors } from "../../../constants";
+import Content from "../../../components/Content";
+import useFetch from "../../../hooks/useFetch";
+import { useHistoryStore } from "../../../stores/history-store";
 
 type TypeButtonWrapper = {
   onNext: () => void;
   onPrev: () => void;
 };
-
 const ButtonWrapper = ({ onPrev, onNext }: TypeButtonWrapper) => {
   return (
     <View
@@ -40,7 +34,8 @@ const NovelChapter = () => {
   const params = useLocalSearchParams();
   const chapter = Number(params.chapter);
   const slug = params.slug.toString();
-  const { width } = useWindowDimensions();
+
+  const setHistory = useHistoryStore((state) => state.setHistory);
 
   const [currentChapter, setCurrentChapter] = useState(chapter);
   const title = `Chapter ${currentChapter}`;
@@ -55,15 +50,19 @@ const NovelChapter = () => {
   });
 
   useEffect(() => {
+    setHistory({
+      chapter,
+      title: slug,
+      link: `/novel/chapter/${chapter}`,
+    });
+  }, []);
+
+  useEffect(() => {
     refetch();
   }, [currentChapter]);
 
   if (isLoading) return <Loading />;
-  if (error) return <Error />;
-
-  if (!data) return <Error message="Chapter not exist" />;
-
-  const html = `<div style="color: ${colors.primaryColor}">${data[0].content}</div>`;
+  if (error || !data) return <Error />;
 
   const handleNext = () => {
     setCurrentChapter((prev) => prev + 1);
@@ -77,12 +76,7 @@ const NovelChapter = () => {
       <Header title={title} />
       <ScrollView style={{ padding: 10, paddingBottom: 20 }}>
         <ButtonWrapper onNext={handleNext} onPrev={handlePrev} />
-        <RenderHTML
-          contentWidth={width}
-          source={{
-            html,
-          }}
-        />
+        <Content content={data[0].content} />
         <ButtonWrapper onNext={handleNext} onPrev={handlePrev} />
       </ScrollView>
     </SafeAreaView>
