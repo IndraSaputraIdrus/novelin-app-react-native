@@ -11,10 +11,9 @@ const Button = ({ text, onPress }: Props) => {
     <TouchableOpacity
       style={{
         backgroundColor: colors.primaryColor,
-        paddingHorizontal: 10,
-        paddingVertical: 5,
       }}
       onPress={onPress}
+      className="px-5 py-1.5 rounded-md"
     >
       <Text style={{ color: colors.secondaryColor }}>{text}</Text>
     </TouchableOpacity>

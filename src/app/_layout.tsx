@@ -3,7 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { colors } from "../constants";
 import { Text } from "react-native";
 
-const Layout = () => {
+const AppLayout = () => {
   return (
     <>
       <StatusBar style="light" />
@@ -14,7 +14,7 @@ const Layout = () => {
               href="/modal"
               asChild
               style={{
-                color: colors.accent,
+                color: colors.secondaryColor,
                 backgroundColor: colors.muted,
                 height: 20,
                 width: 20,
@@ -28,12 +28,13 @@ const Layout = () => {
           headerStyle: {
             backgroundColor: colors.secondaryColor,
           },
+          headerTitleAlign: "center",
           headerTintColor: colors.primaryColor,
           title: "Loading...",
         }}
-      />
+      ></Stack>
     </>
   );
 };
 
-export default Layout;
+export default AppLayout;

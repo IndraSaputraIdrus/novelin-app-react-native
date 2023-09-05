@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primaryColor,
     flex: 1,
     paddingVertical: 10,
+    borderRadius: 3,
   },
   buttonText: {
     color: colors.secondaryColor,
@@ -142,5 +143,6 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: 10,
     paddingVertical: 10,
+    borderRadius: 3,
   },
 });

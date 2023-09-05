@@ -1,27 +1,24 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { useEffect, useState } from "react";
-import { Novel } from "../typings";
+import { NovelContent } from "typings";
 
 type Props = {
-  endpoint: string;
-  method: "GET" | "POST";
-  body?: {
+  body: {
     slug: string;
-    viewAll?: boolean;
-    chapter?: number;
+    chapter: number;
   };
 };
 
-const useFetch = ({ endpoint, method, body }: Props) => {
-  const [data, setData] = useState<Novel[] | null>(null);
+const useFetch = ({ body }: Props) => {
+  const [data, setData] = useState<NovelContent[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const url = process.env.EXPO_PUBLIC_API_URL;
 
   const options: AxiosRequestConfig = {
-    method: method,
-    url: url + endpoint,
+    method: "POST",
+    url: url + "api/novel",
     data: body,
   };
 

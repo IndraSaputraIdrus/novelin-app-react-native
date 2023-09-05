@@ -1,14 +1,16 @@
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { useLocalSearchParams } from "expo-router";
-import Loading from "../../../components/Loading";
-import Error from "../../../components/Error";
-import Button from "../../../components/Button";
-import { useEffect, useState } from "react";
-import Header from "../../../components/Header";
-import { colors } from "../../../constants";
-import Content from "../../../components/Content";
-import useFetch from "../../../hooks/useFetch";
-import { useHistoryStore } from "../../../stores/history-store";
+import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
+import { colors } from "@/constants";
+
+import Loading from "@/components/Loading";
+import Error from "@/components/Error";
+import Button from "@/components/Button";
+import Header from "@/components/Header";
+import Content from "@/components/Content";
+
+import useFetchContent from "@/hooks/useFetchContent";
+import { useHistoryStore } from "@/stores/history-store";
 
 type TypeButtonWrapper = {
   onNext: () => void;
@@ -37,14 +39,11 @@ const NovelChapter = () => {
 
   const setHistory = useHistoryStore((state) => state.setHistory);
 
-  const [currentChapter, setCurrentChapter] = useState(chapter);
-  const title = `Chapter ${currentChapter}`;
+  const title = `Chapter ${chapter}`;
 
-  const { data, isLoading, error, refetch } = useFetch({
-    endpoint: "api/novel",
-    method: "POST",
+  const { data, error, isLoading } = useFetchContent({
     body: {
-      chapter: currentChapter,
+      chapter,
       slug,
     },
   });
@@ -53,22 +52,18 @@ const NovelChapter = () => {
     setHistory({
       chapter,
       title: slug,
-      link: `/novel/chapter/${chapter}`,
+      link: `/novel/${slug}/${chapter}`,
     });
   }, []);
-
-  useEffect(() => {
-    refetch();
-  }, [currentChapter]);
 
   if (isLoading) return <Loading />;
   if (error || !data) return <Error />;
 
   const handleNext = () => {
-    setCurrentChapter((prev) => prev + 1);
+    router.replace(`/novel/${slug}/${chapter + 1}`);
   };
   const handlePrev = () => {
-    setCurrentChapter((prev) => prev - 1);
+    router.replace(`/novel/${slug}/${chapter - 1}`);
   };
 
   return (
