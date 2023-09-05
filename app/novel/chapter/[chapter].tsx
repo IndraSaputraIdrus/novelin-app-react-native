@@ -8,6 +8,7 @@ import Header from "../../../components/Header";
 import { colors } from "../../../constants";
 import Content from "../../../components/Content";
 import useFetch from "../../../hooks/useFetch";
+import { useHistoryStore } from "../../../stores/history-store";
 
 type TypeButtonWrapper = {
   onNext: () => void;
@@ -34,6 +35,8 @@ const NovelChapter = () => {
   const chapter = Number(params.chapter);
   const slug = params.slug.toString();
 
+  const setHistory = useHistoryStore((state) => state.setHistory);
+
   const [currentChapter, setCurrentChapter] = useState(chapter);
   const title = `Chapter ${currentChapter}`;
 
@@ -47,13 +50,19 @@ const NovelChapter = () => {
   });
 
   useEffect(() => {
+    setHistory({
+      chapter,
+      title: slug,
+      link: `/novel/chapter/${chapter}`,
+    });
+  }, []);
+
+  useEffect(() => {
     refetch();
   }, [currentChapter]);
 
   if (isLoading) return <Loading />;
-  if (error) return <Error />;
-
-  if (!data) return <Error message="Chapter not exist" />;
+  if (error || !data) return <Error />;
 
   const handleNext = () => {
     setCurrentChapter((prev) => prev + 1);

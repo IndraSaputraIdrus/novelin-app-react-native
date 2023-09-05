@@ -1,25 +1,36 @@
 import { createWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 type SettingStore = {
   fontSize: number;
   lineHeight: number;
-  avaliableFontSize: number[];
-  avaliableLineHeight: number[];
-  setFont: (newSize: number) => void;
+  setFont: ({
+    fontSize,
+    lineHeight,
+  }: {
+    fontSize: number;
+    lineHeight: number;
+  }) => void;
 };
 
-export const useSettingStore = createWithEqualityFn<SettingStore>(
-  (set) => ({
-    fontSize: 16,
-    lineHeight: 24,
-    avaliableFontSize: [14, 16, 18, 20, 24],
-    avaliableLineHeight: [20, 24, 28, 28, 32],
-    setFont: (newSize: number) =>
-      set((state) => ({
-        fontSize: state.avaliableFontSize[newSize],
-        lineHeight: state.avaliableLineHeight[newSize],
-      })),
-  }),
+const initialState = {
+  fontSize: 16,
+  lineHeight: 24,
+};
+
+export const useSettingStore = createWithEqualityFn<SettingStore>()(
+  persist(
+    (set) => ({
+      ...initialState,
+      setFont: ({ fontSize, lineHeight }) =>
+        set(() => ({ fontSize, lineHeight })),
+    }),
+    {
+      name: "settings",
+      storage: createJSONStorage(() => AsyncStorage),
+    }
+  ),
   shallow
 );

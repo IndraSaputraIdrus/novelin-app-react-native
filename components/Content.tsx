@@ -20,7 +20,6 @@ const Content = ({ content }: Props) => {
       tagsStyles={{
         h1: {
           fontSize: fontSize + 10,
-          lineHeight,
         },
         p: {
           fontSize,

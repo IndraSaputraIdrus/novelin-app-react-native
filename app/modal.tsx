@@ -1,27 +1,47 @@
-import { Pressable, Text, View } from "react-native";
-import { Stack } from "expo-router";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Stack, router } from "expo-router";
 import { colors } from "../constants";
 import { useSettingStore } from "../stores/setting-store";
+import { useState } from "react";
+import { useHistoryStore } from "../stores/history-store";
 export default function Modal() {
-  const [fontSize, lineHeight, avaliableFontSize, setFont] = useSettingStore(
-    (state) => [
-      state.fontSize,
-      state.lineHeight,
-      state.avaliableFontSize,
-      state.setFont,
-    ]
-  );
+  const [localSize, setLocalSize] = useState({
+    fontSize: 16,
+    lineHeight: 24,
+  });
+
+  const avaliableFontSize = [14, 16, 18, 20, 24];
+  const avaliableLineHeight = [20, 24, 28, 28, 32];
+
+  const setFont = useSettingStore((state) => state.setFont);
+  const removeHistory = useHistoryStore((state) => state.removeHistory);
+
+  const removeHistoryFromState = () => {
+    removeHistory();
+    router.back();
+  };
 
   const increase = () => {
-    const currentIndex = avaliableFontSize.indexOf(fontSize);
+    const currentIndex = avaliableFontSize.indexOf(localSize.fontSize);
     const newIndex = (currentIndex + 1) % avaliableFontSize.length;
-    setFont(newIndex);
+    setLocalSize({
+      fontSize: avaliableFontSize[newIndex],
+      lineHeight: avaliableLineHeight[newIndex],
+    });
   };
   const decrease = () => {
-    const currentIndex = avaliableFontSize.indexOf(fontSize);
+    const currentIndex = avaliableFontSize.indexOf(localSize.fontSize);
     const newIndex =
       (currentIndex - 1 + avaliableFontSize.length) % avaliableFontSize.length;
-    setFont(newIndex);
+    setLocalSize({
+      fontSize: avaliableFontSize[newIndex],
+      lineHeight: avaliableLineHeight[newIndex],
+    });
+  };
+
+  const submit = () => {
+    setFont(localSize);
+    router.back();
   };
 
   return (
@@ -41,72 +61,86 @@ export default function Modal() {
           backgroundColor: colors.secondaryColor,
         }}
       >
-        <Text
-          style={{
-            fontSize: fontSize + 10,
-            color: colors.primaryColor,
-            alignSelf: "flex-start",
-          }}
-        >
-          Title
-        </Text>
-        <Text
-          style={{
-            fontSize,
-            color: colors.primaryColor,
-            alignSelf: "flex-start",
-            lineHeight,
-          }}
-        >
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio aperiam
-          praesentium consectetur sequi? Commodi, id illum temporibus esse
-          voluptatibus quasi iusto doloremque corrupti quas a quae perferendis,
-          exercitationem eos sed.
-        </Text>
         <View
-          style={{ marginTop: 15, flexDirection: "row", alignItems: "center" }}
+          style={{
+            flex: 1,
+            width: "100%",
+            marginTop: 20,
+          }}
         >
-          <Pressable onPress={decrease}>
-            {({ pressed }) => (
-              <View
-                style={{
-                  backgroundColor: pressed ? colors.muted : colors.primaryColor,
-                  flexShrink: 1,
-                  width: 100,
-                  paddingVertical: 5,
-                }}
-              >
-                <Text
-                  style={{ color: colors.secondaryColor, textAlign: "center" }}
-                >
-                  Perkecil
-                </Text>
-              </View>
-            )}
-          </Pressable>
-          <Text style={{ color: colors.primaryColor, marginHorizontal: 15 }}>
-            size: {fontSize}
+          <Text
+            style={{
+              fontSize: localSize.fontSize + 10,
+              fontWeight: "bold",
+              color: colors.primaryColor,
+              alignSelf: "flex-start",
+            }}
+          >
+            Title
           </Text>
-          <Pressable onPress={increase}>
-            {({ pressed }) => (
-              <View
-                style={{
-                  backgroundColor: pressed ? colors.muted : colors.primaryColor,
-                  flexShrink: 1,
-                  width: 100,
-                  paddingVertical: 5,
-                }}
-              >
-                <Text
-                  style={{ color: colors.secondaryColor, textAlign: "center" }}
-                >
-                  Perbesar
-                </Text>
-              </View>
-            )}
-          </Pressable>
+          <Text
+            style={{
+              fontSize: localSize.fontSize,
+              color: colors.primaryColor,
+              alignSelf: "flex-start",
+              lineHeight: localSize.lineHeight,
+            }}
+          >
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio
+            aperiam praesentium consectetur sequi? Commodi, id illum temporibus
+            esse voluptatibus quasi iusto doloremque corrupti quas a quae
+            perferendis, exercitationem eos sed.
+          </Text>
         </View>
+        <View
+          style={{
+            width: "100%",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
+            marginTop: 10,
+          }}
+        >
+          <TouchableOpacity style={styles.button} onPress={decrease}>
+            <Text style={styles.buttonText}>-</Text>
+          </TouchableOpacity>
+          <Text style={{ color: colors.primaryColor }}>
+            Size: {localSize.fontSize}
+          </Text>
+          <TouchableOpacity style={styles.button} onPress={increase}>
+            <Text style={styles.buttonText}>+</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={styles.submit} onPress={submit}>
+          <Text style={styles.buttonText}>Save</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.submit}
+          onPress={removeHistoryFromState}
+        >
+          <Text style={styles.buttonText}>Remove history</Text>
+        </TouchableOpacity>
       </View>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: colors.primaryColor,
+    flex: 1,
+    paddingVertical: 10,
+  },
+  buttonText: {
+    color: colors.secondaryColor,
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  submit: {
+    backgroundColor: colors.primaryColor,
+    width: "100%",
+    marginTop: 10,
+    paddingVertical: 10,
+  },
+});

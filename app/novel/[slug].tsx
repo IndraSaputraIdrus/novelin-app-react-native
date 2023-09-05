@@ -14,12 +14,17 @@ import { useState } from "react";
 import Header from "../../components/Header";
 import { colors } from "../../constants";
 import useFetch from "../../hooks/useFetch";
+import { useHistoryStore } from "../../stores/history-store";
 
 const NovelSlug = () => {
   const params = useLocalSearchParams();
   const slug = params.slug.toString();
   const title = params.title.toString();
   const [search, setSearch] = useState<string>("");
+
+  const [history] = useHistoryStore((state) => [
+    state.history.filter((novel) => novel.title === slug),
+  ]);
 
   const { data, isLoading, error } = useFetch({
     method: "POST",
@@ -35,9 +40,7 @@ const NovelSlug = () => {
   };
 
   if (isLoading) return <Loading />;
-  if (error) return <Error />;
-
-  if (!data || !data[0].chapters) return <Error message="Chapter not exist" />;
+  if (error || !data || !data[0].chapters) return <Error />;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -56,6 +59,25 @@ const NovelSlug = () => {
         onChangeText={handleChangeText}
         placeholderTextColor={colors.muted}
       />
+      {history[0] ? (
+        <Link
+          href={{
+            pathname: history[0].link,
+            params: {
+              slug: history[0].title,
+              chapter: history[0].chapter,
+            },
+          }}
+          style={{
+            textAlign: "center",
+            color: colors.muted,
+            marginBottom: 5,
+            textDecorationLine: "underline",
+          }}
+        >
+          Latest read {history[0].chapter}
+        </Link>
+      ) : null}
       <FlatList
         style={styles.chapter}
         data={data[0].chapters.filter((item) =>
