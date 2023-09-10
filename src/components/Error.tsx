@@ -1,5 +1,6 @@
 import { View, Text } from "react-native";
 import { colors } from "../constants";
+import tw from "@/lib/twrnc";
 
 type Props = {
   message?: string;
@@ -7,15 +8,8 @@ type Props = {
 
 const Error = ({ message }: Props) => {
   return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: colors.secondaryColor,
-      }}
-    >
-      <Text style={{ color: colors.primaryColor }}>
+    <View style={tw`flex-1 justify-center items-center bg-secondary px-3 py-1`}>
+      <Text style={tw`bg-primary font-bold`}>
         {message ? message : "404 Not Found"}
       </Text>
     </View>

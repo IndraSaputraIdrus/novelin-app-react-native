@@ -1,3 +1,4 @@
+import tw from "@/lib/twrnc";
 import { Link } from "expo-router";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 
@@ -9,7 +10,7 @@ type Props = {
 
 const ListChapter = ({ data, search, slug }: Props) => {
   return (
-    <View className="mt-1">
+    <View style={tw`mt-1`}>
       <FlatList
         data={data.filter((item) =>
           item.chapter_number.toString().includes(search)
@@ -25,8 +26,8 @@ const ListChapter = ({ data, search, slug }: Props) => {
               },
             }}
           >
-            <TouchableOpacity className="bg-gray-700/50 text-orange-900 my-1 rounded-md">
-              <Text className="text-center py-2">
+            <TouchableOpacity style={tw`bg-gray-700/50 my-1 rounded-md`}>
+              <Text style={tw`text-center py-2 text-primary`}>
                 Chapter - {item.chapter_number}
               </Text>
             </TouchableOpacity>

@@ -1,10 +1,11 @@
+import tw from "@/lib/twrnc";
 import { Image, View } from "react-native";
 
 const CoverImg = ({ uri }: { uri: string }) => {
   return (
-    <View className="self-center w-40 h-56 mb-3 rounded-md overflow-hidden">
+    <View style={tw`self-center w-40 h-56 mb-3 rounded-md overflow-hidden`}>
       <Image
-        className="w-full h-full"
+        style={tw`w-full h-full`}
         source={{
           uri,
         }}

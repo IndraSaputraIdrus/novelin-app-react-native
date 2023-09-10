@@ -1,5 +1,6 @@
 import { Text, TouchableOpacity } from "react-native";
 import { colors } from "../constants";
+import tw from "@/lib/twrnc";
 
 type Props = {
   text: string;
@@ -9,13 +10,10 @@ type Props = {
 const Button = ({ text, onPress }: Props) => {
   return (
     <TouchableOpacity
-      style={{
-        backgroundColor: colors.primaryColor,
-      }}
       onPress={onPress}
-      className="px-5 py-1.5 rounded-md"
+      style={tw`px-5 py-1.5 rounded bg-primary`}
     >
-      <Text style={{ color: colors.secondaryColor }}>{text}</Text>
+      <Text style={tw`text-secondary font-semibold`}>{text}</Text>
     </TouchableOpacity>
   );
 };

@@ -1,17 +1,42 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Stack, router } from "expo-router";
-import { colors } from "../constants";
-import { useSettingStore } from "../stores/setting-store";
+import { colors } from "@/constants";
+import { useSettingStore } from "@/stores/setting-store";
 import { useState } from "react";
-import { useHistoryStore } from "../stores/history-store";
+import { useHistoryStore } from "@/stores/history-store";
+import tw from "@/lib/twrnc";
+import { convertFontSize } from "@/lib/convertFontSize";
+
+function SettingButton({
+  onPress,
+  title,
+}: {
+  onPress: () => void;
+  title: string;
+}) {
+  return (
+    <TouchableOpacity
+      style={tw`bg-primary px-5 py-2 rounded`}
+      onPress={onPress}
+    >
+      <Text style={tw`text-secondary text-center font-bold text-xl`}>
+        {title}
+      </Text>
+    </TouchableOpacity>
+  );
+}
+
 export default function Modal() {
   const [localSize, setLocalSize] = useState({
-    fontSize: 16,
-    lineHeight: 24,
+    titleFontSize: 24,
+    paragraphFontSize: 16,
   });
 
   const avaliableFontSize = [14, 16, 18, 20, 24];
-  const avaliableLineHeight = [20, 24, 28, 28, 32];
+  const avaliableFontSizeTitle = [20, 24, 30, 36, 48];
+
+  const paragraphSize = convertFontSize(localSize.paragraphFontSize);
+  const titleSize = convertFontSize(localSize.titleFontSize);
 
   const setFont = useSettingStore((state) => state.setFont);
   const removeHistory = useHistoryStore((state) => state.removeHistory);
@@ -22,25 +47,28 @@ export default function Modal() {
   };
 
   const increase = () => {
-    const currentIndex = avaliableFontSize.indexOf(localSize.fontSize);
+    const currentIndex = avaliableFontSize.indexOf(localSize.paragraphFontSize);
     const newIndex = (currentIndex + 1) % avaliableFontSize.length;
     setLocalSize({
-      fontSize: avaliableFontSize[newIndex],
-      lineHeight: avaliableLineHeight[newIndex],
+      paragraphFontSize: avaliableFontSize[newIndex],
+      titleFontSize: avaliableFontSizeTitle[newIndex],
     });
   };
   const decrease = () => {
-    const currentIndex = avaliableFontSize.indexOf(localSize.fontSize);
+    const currentIndex = avaliableFontSize.indexOf(localSize.paragraphFontSize);
     const newIndex =
       (currentIndex - 1 + avaliableFontSize.length) % avaliableFontSize.length;
     setLocalSize({
-      fontSize: avaliableFontSize[newIndex],
-      lineHeight: avaliableLineHeight[newIndex],
+      paragraphFontSize: avaliableFontSize[newIndex],
+      titleFontSize: avaliableFontSizeTitle[newIndex],
     });
   };
 
   const submit = () => {
-    setFont(localSize);
+    setFont({
+      paragraphSize: localSize.paragraphFontSize,
+      titleSize: localSize.titleFontSize,
+    });
     router.back();
   };
 
@@ -52,97 +80,33 @@ export default function Modal() {
           presentation: "modal",
         }}
       />
-      <View
-        style={{
-          flex: 1,
-          alignItems: "center",
-          padding: 10,
-          justifyContent: "center",
-          backgroundColor: colors.secondaryColor,
-        }}
-      >
-        <View
-          style={{
-            flex: 1,
-            width: "100%",
-            marginTop: 20,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: localSize.fontSize + 10,
-              fontWeight: "bold",
-              color: colors.primaryColor,
-              alignSelf: "flex-start",
-            }}
-          >
-            Title
-          </Text>
-          <Text
-            style={{
-              fontSize: localSize.fontSize,
-              color: colors.primaryColor,
-              alignSelf: "flex-start",
-              lineHeight: localSize.lineHeight,
-            }}
-          >
+      <View style={tw`flex-1 p-3 bg-secondary`}>
+        <View style={tw`flex-1 mt-5`}>
+          <Text style={tw`${titleSize} text-primary`}>Title</Text>
+          <Text style={tw`${paragraphSize} text-primary mt-2`}>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio
             aperiam praesentium consectetur sequi? Commodi, id illum temporibus
             esse voluptatibus quasi iusto doloremque corrupti quas a quae
             perferendis, exercitationem eos sed.
           </Text>
         </View>
-        <View
-          style={{
-            width: "100%",
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 10,
-            marginTop: 10,
-          }}
-        >
-          <TouchableOpacity style={styles.button} onPress={decrease}>
-            <Text style={styles.buttonText}>-</Text>
-          </TouchableOpacity>
-          <Text style={{ color: colors.primaryColor }}>
-            Size: {localSize.fontSize}
-          </Text>
-          <TouchableOpacity style={styles.button} onPress={increase}>
-            <Text style={styles.buttonText}>+</Text>
-          </TouchableOpacity>
+        <View style={tw`gap-2`}>
+          <View
+            style={tw`w-full flex-row items-center gap-5 justify-between gap-2`}
+          >
+            <SettingButton title="-" onPress={decrease} />
+            <Text style={{ color: colors.primaryColor }}>
+              Size: {localSize.paragraphFontSize}
+            </Text>
+            <SettingButton title="+" onPress={increase} />
+          </View>
+          <SettingButton title="Submit" onPress={submit} />
+          <SettingButton
+            title="Remove history"
+            onPress={removeHistoryFromState}
+          />
         </View>
-        <TouchableOpacity style={styles.submit} onPress={submit}>
-          <Text style={styles.buttonText}>Save</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.submit}
-          onPress={removeHistoryFromState}
-        >
-          <Text style={styles.buttonText}>Remove history</Text>
-        </TouchableOpacity>
       </View>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    backgroundColor: colors.primaryColor,
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 3,
-  },
-  buttonText: {
-    color: colors.secondaryColor,
-    textAlign: "center",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  submit: {
-    backgroundColor: colors.primaryColor,
-    width: "100%",
-    marginTop: 10,
-    paddingVertical: 10,
-    borderRadius: 3,
-  },
-});

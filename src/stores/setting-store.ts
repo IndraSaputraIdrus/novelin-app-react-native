@@ -4,28 +4,28 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 type SettingStore = {
-  fontSize: number;
-  lineHeight: number;
+  titleSize: number;
+  paragraphSize: number;
   setFont: ({
-    fontSize,
-    lineHeight,
+    paragraphSize,
+    titleSize,
   }: {
-    fontSize: number;
-    lineHeight: number;
+    paragraphSize: number;
+    titleSize: number;
   }) => void;
 };
 
 const initialState = {
-  fontSize: 16,
-  lineHeight: 24,
+  paragraphSize: 16,
+  titleSize: 20,
 };
 
 export const useSettingStore = createWithEqualityFn<SettingStore>()(
   persist(
     (set) => ({
       ...initialState,
-      setFont: ({ fontSize, lineHeight }) =>
-        set(() => ({ fontSize, lineHeight })),
+      setFont: ({ paragraphSize, titleSize }) =>
+        set(() => ({ paragraphSize, titleSize })),
     }),
     {
       name: "settings",

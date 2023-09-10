@@ -1,5 +1,6 @@
 import { colors } from "@/constants";
 import truncate from "@/lib/truncate";
+import tw from "@/lib/twrnc";
 import { Link } from "expo-router";
 import { Text, Image, TouchableOpacity, View } from "react-native";
 import { CardType } from "typings";
@@ -16,19 +17,16 @@ const Card = ({ cover_img, slug, title }: CardType) => {
         },
       }}
     >
-      <TouchableOpacity className="w-1/2 px-2">
-        <View className="h-60">
+      <TouchableOpacity style={tw`w-1/2 px-2`}>
+        <View style={tw`h-60`}>
           <Image
-            className="h-full w-full rounded-md"
+            style={tw`h-full w-full rounded`}
             source={{
               uri: cover_img,
             }}
           />
         </View>
-        <Text
-          style={{ color: colors.primaryColor }}
-          className="text-lg mt-1 text-center truncate"
-        >
+        <Text style={tw`text-lg mt-1 text-center text-primary`}>
           {truncate(title, 16)}
         </Text>
       </TouchableOpacity>
