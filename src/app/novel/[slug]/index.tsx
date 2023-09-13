@@ -1,8 +1,7 @@
 import { Text, SafeAreaView, TextInput } from "react-native";
 import { Link, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import Error from "@/components/Error";
 import Loading from "@/components/Loading";
 import Header from "@/components/Header";
 
@@ -23,25 +22,19 @@ const NovelSlug = () => {
     state.history.filter((novel) => novel.title === slug),
   ]);
 
-  const { data, isLoading, error } = useFetchNovel({
-    method: "POST",
+  const { data, isLoading } = useFetchNovel({
     body: {
       slug,
       viewAll: true,
     },
+    method: "POST",
   });
 
   const handleChangeText = (value: string) => {
     setSearch(value);
   };
 
-  if (isLoading) return <Loading />;
-  if (error || !data || !data[0].chapters) return <Error />;
-
-  // SafeAreaView className="flex-1 px-2"
-  // text title className="text-xl font-semibold mb-3 text-center"
-  // text input className="px-3 py-1 bg-gray-600 rounded-md"
-  // link className="text-sm text-muted text-center my-3"
+  if (isLoading || !data || data.length < 1) return <Loading />;
 
   return (
     <SafeAreaView style={tw`flex-1 px-2 bg-secondary`}>
